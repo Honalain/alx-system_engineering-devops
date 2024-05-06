@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+#bash scipt that displays line containings the bash word
+#shellcheck disable=SC2009
+ps -eo user,pid,%cpu,%mem,vsz,rss,tty,stat,start,time,cmd --forest | grep bash
