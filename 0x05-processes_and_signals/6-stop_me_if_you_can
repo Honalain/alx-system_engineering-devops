@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+#ash script that stops 4-to_infinity_and_beyond process.with out kill or killall
+
+pid=$(pgrep -f "4-to_infinity_and_beyond")
+if  [ -n "pid" ];
+then
+	pkill -f "4-to_infinity_and_beyond"
+fi

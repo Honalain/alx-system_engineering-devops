@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+#ash script that stops 4-to_infinity_and_beyond process.with out kill or killall
+handle_sigterm()
+{
+	echo "I am invincible!!!"
+	exit 0
+}
+trap handle_sigterm SIGTERM
+pid=$(pgrep -f "7-highlander")
+
+if [ -n "$pid" ];
+then
+	pkill -f "7-highlander"
+fi
