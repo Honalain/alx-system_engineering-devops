@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+# Configures a UFW firewall to block all incoming traffic except for TCP ports 22, 443, and 80.
+# Additionally, it redirects port 8080/TCP to port 80/TCP.
+
+# Ensure script is run as root
+if [ "$EUID" -ne 0 ]; then
+  echo "Please run as root"
+  exit
+fi
+
+# Update package lists and install ufw if it is not already installed
+sudo apt-get update
+sudo apt-get install -y ufw
+
+# Enable IPv6 support in UFW
+sudo sed -i 's/IPV6=.*/IPV6=yes/' /etc/default/ufw
+
+# Disable and reset UFW to apply new settings
+sudo ufw disable
+sudo ufw --force reset
+
+# Set default policies
+sudo ufw default deny incoming
+sudo ufw default allow outgoing
+
+# Allow specific incoming ports
+sudo ufw allow 22/tcp
+sudo ufw allow 443/tcp
+sudo ufw allow 80/tcp
+
+# Enable UFW
+sudo ufw enable
+
+# Configure port forwarding from 8080 to 80
+sudo sed -i '/^# End required lines/a *nat\n:PREROUTING ACCEPT [0:0]\n:POSTROUTING ACCEPT [0:0]\n-A PREROUTING -p tcp --dport 8080 -j REDIRECT --to-port 80\nCOMMIT' /etc/ufw/before.rules
+
+# Reload UFW to apply changes
+sudo ufw reload
+
+# Show UFW status
+sudo ufw status verbose
+
