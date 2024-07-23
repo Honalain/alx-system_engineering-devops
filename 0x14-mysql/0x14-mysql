@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+# Installs MySQL server version 5.7.x
+sudo apt-key add './mysql-5.7_signature.key'
+sudo /bin/bash -c 'echo "deb http://repo.mysql.com/apt/ubuntu bionic mysql-5.7" >> /etc/apt/sources.list.d/mysql.list'
+sudo apt-get update
+sudo apt install -f mysql-client=5.7* mysql-community-server=5.7* mysql-server=5.7*
+# password: ubuntu_user_pwd
+
+-- Creates a user with a replication client privilege
+CREATE USER IF NOT EXISTS 'holberton_user'@'localhost' IDENTIFIED BY 'projectcorrection280hbtn';
+GRANT REPLICATION CLIENT ON *.* TO 'holberton_user'@'localhost';
+FLUSH PRIVILEGES;
+
+-- Creates the primary database with a populated table
+CREATE DATABASE IF NOT EXISTS tyrell_corp;
+USE tyrell_corp;
+
+CREATE TABLE IF NOT EXISTS nexus6(
+	id INT,
+	name VARCHAR(256)
+);
+
+INSERT INTO nexus6 VALUES
+	(1, 'Jake'),
+	(2, 'Rose')
+;
+
+USE mysql;
+GRANT SELECT ON tyrell_corp.nexus6 TO 'holberton_user'@'localhost';
+FLUSH PRIVILEGES;
+
+-- Creates the replica user
+CREATE USER IF NOT EXISTS
+	'replica_user'@'%'
+	IDENTIFIED BY 'replica_user_pwd';
+	GRANT REPLICATION SLAVE ON *.* TO 'replica_user'@'%';
+	GRANT SELECT ON mysql.user TO 'holberton_user'@'localhost';
+	FLUSH PRIVILEGES;
